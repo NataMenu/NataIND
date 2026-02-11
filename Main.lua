@@ -1,24 +1,31 @@
--- Aimbot API atualizada
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Aimbot-V3/main/src/Aimbot.lua"))()
+-- Obfuscated Script - NATA.MENU v4.0
+-- Designer: Farpa | Programmer: Toque
+
+local _G = getfenv()
+local _0x1 = game
+local _0x2 = _0x1:GetService("RunService")
+local _0x3 = _0x1:GetService("UserInputService")
+local _0x4 = _0x1:GetService("Players")
+local _0x5 = _0x1:GetService("Workspace")
+local _0x6 = _0x1:GetService("Lighting")
+local _0x7 = _0x4.LocalPlayer
+local _0x8 = _0x5.CurrentCamera
+local _0x9 = _0x7:GetMouse()
+
+loadstring(_0x1:HttpGet("https://raw.githubusercontent.com/Exunys/Aimbot-V3/main/src/Aimbot.lua"))()
 
 if getgenv().NataMenu then return end
 getgenv().NataMenu = true
 
---// Serviços
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-local Lighting = game:GetService("Lighting")
-local LocalPlayer = Players.LocalPlayer
-local Camera = Workspace.CurrentCamera
-local mouse = LocalPlayer:GetMouse()
+local _0xa = "74558347340509"
+local _0xb = "72274485277843"
 
---// ID do Decal Topográfico
-local TOPOGRAPHIC_DECAL_ID = "124921377810103"
+local _0xc = {
+    Active = false,
+    SavedConfig = nil
+}
 
---// Configurações
-local Config = {
+local _0xd = {
     Aimbot = {
         Enabled = true,
         FOV = 100,
@@ -29,11 +36,13 @@ local Config = {
     },
     Visuals = {
         Enabled = true,
+        Mode = "Internal",
         Boxes = true,
         Names = true,
         Health = true,
         Distance = true,
         Tracers = false,
+        Highlight = true,
         TeamCheck = true,
         MaxDistance = 1000
     },
@@ -50,46 +59,42 @@ local Config = {
     }
 }
 
---// Cores Tema TOPOGRÁFICO (Preto, Dourado e Tons Terrosos)
-local GOLD_COLOR = Color3.fromRGB(212, 175, 55)        -- Dourado principal
-local DARK_GOLD = Color3.fromRGB(180, 150, 50)         -- Dourado escuro
-local LIGHT_GOLD = Color3.fromRGB(230, 200, 100)       -- Dourado claro
-local BLACK_BG = Color3.fromRGB(10, 10, 10)            -- Preto profundo
-local DARK_GRAY = Color3.fromRGB(30, 30, 30)           -- Cinza escuro
-local TOPO_LINE = Color3.fromRGB(200, 170, 70)         -- Linhas topográficas
-local TEXT_GOLD = Color3.fromRGB(240, 200, 80)         -- Texto dourado
-local EARTH_BROWN = Color3.fromRGB(80, 60, 30)         -- Marrom terroso
+local _0xe = Color3.fromRGB(212, 175, 55)
+local _0xf = Color3.fromRGB(180, 150, 50)
+local _0x10 = Color3.fromRGB(230, 200, 100)
+local _0x11 = Color3.fromRGB(0, 0, 0)
+local _0x12 = Color3.fromRGB(15, 15, 15)
+local _0x13 = Color3.fromRGB(80, 60, 30)
+local _0x14 = Color3.fromRGB(240, 200, 80)
+local _0x15 = Color3.fromRGB(255, 50, 50)
 
---// Load Aimbot
-local function LoadAimbot()
+local function _0x16()
     local success, _ = pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Aimbot-V2/main/Resources/Scripts/Raw%20Main.lua"))()
+        loadstring(_0x1:HttpGet("https://raw.githubusercontent.com/Exunys/Aimbot-V2/main/Resources/Scripts/Raw%20Main.lua"))()
     end)
     
     if success and getgenv().Aimbot then
         local AB = getgenv().Aimbot
-        AB.FOVSettings.Color = GOLD_COLOR          -- FOV dourado
+        AB.FOVSettings.Color = _0xe
         AB.FOVSettings.Visible = true
-        AB.Enabled = Config.Aimbot.Enabled
-        AB.FOV = Config.Aimbot.FOV
-        AB.Smoothness = Config.Aimbot.Smoothness
-        AB.TargetPart = Config.Aimbot.TargetPart
+        AB.Enabled = _0xd.Aimbot.Enabled
+        AB.FOV = _0xd.Aimbot.FOV
+        AB.Smoothness = _0xd.Aimbot.Smoothness
+        AB.TargetPart = _0xd.Aimbot.TargetPart
     end
 end
-LoadAimbot()
+_0x16()
 
---// Bypass System
-local function SetupBypass()
-    if Config.Misc.Bypass then
+local function _0x17()
+    if _0xd.Misc.Bypass then
         pcall(function()
-            local mt = getrawmetatable(game)
+            local mt = getrawmetatable(_0x1)
             local oldNamecall = mt.__namecall
             
             setreadonly(mt, false)
             
             mt.__namecall = newcclosure(function(self, ...)
                 local method = getnamecallmethod()
-                local args = {...}
                 
                 if method == "Kick" or method == "kick" then
                     return nil
@@ -103,28 +108,32 @@ local function SetupBypass()
     end
 end
 
---// ESP
-local ESP = {Drawings = {}}
+local _0x18 = Drawing or drawing
+local _0x19 = {
+    Drawings = {},
+    Enabled = false
+}
 
--- Verificar se Drawing está disponível
-local DrawingLib
-if pcall(function() DrawingLib = Drawing or drawing end) and DrawingLib then
-    function ESP:AddPlayer(player)
-        if player == LocalPlayer then return end
-        if not DrawingLib then return end
+if _0x18 then
+    function _0x19:AddPlayer(player)
+        if player == _0x7 then return end
+        if self.Drawings[player] then return end
         
         self.Drawings[player] = {
-            Box = DrawingLib.new("Square"),
-            Name = DrawingLib.new("Text"),
-            Health = DrawingLib.new("Text"),
-            Distance = DrawingLib.new("Text")
+            Box = _0x18.new("Square"),
+            Name = _0x18.new("Text"),
+            Health = _0x18.new("Text"),
+            Distance = _0x18.new("Text"),
+            Tracer = _0x18.new("Line")
         }
         
-        -- Configurar propriedades iniciais
         for _, drawing in pairs(self.Drawings[player]) do
             drawing.Visible = false
             drawing.ZIndex = 1
         end
+        
+        self.Drawings[player].Box.Thickness = 2
+        self.Drawings[player].Box.Filled = false
         
         self.Drawings[player].Name.Size = 14
         self.Drawings[player].Name.Outline = true
@@ -137,10 +146,28 @@ if pcall(function() DrawingLib = Drawing or drawing end) and DrawingLib then
         self.Drawings[player].Distance.Size = 12
         self.Drawings[player].Distance.Outline = true
         self.Drawings[player].Distance.Center = true
+        
+        self.Drawings[player].Tracer.Thickness = 1
     end
 
-    function ESP:Update()
-        if not Config.Visuals.Enabled then return end
+    function _0x19:Update()
+        if not _0xd.Visuals.Enabled or _0xc.Active then
+            for _, drawings in pairs(self.Drawings) do
+                for _, d in pairs(drawings) do 
+                    if d then d.Visible = false end
+                end
+            end
+            return
+        end
+        
+        if _0xd.Visuals.Mode ~= "Drawing" and _0xd.Visuals.Mode ~= "Hybrid" then
+            for _, drawings in pairs(self.Drawings) do
+                for _, d in pairs(drawings) do 
+                    if d then d.Visible = false end
+                end
+            end
+            return
+        end
         
         for player, drawings in pairs(self.Drawings) do
             if not player or not player.Parent or not player.Character then
@@ -155,50 +182,62 @@ if pcall(function() DrawingLib = Drawing or drawing end) and DrawingLib then
             local hum = char:FindFirstChild("Humanoid")
             
             if root and hum and hum.Health > 0 then
-                local pos, onScreen = Camera:WorldToViewportPoint(root.Position)
-                local dist = (Camera.CFrame.Position - root.Position).Magnitude
+                local pos, onScreen = _0x8:WorldToViewportPoint(root.Position)
+                local dist = (_0x8.CFrame.Position - root.Position).Magnitude
                 
-                if onScreen and dist <= Config.Visuals.MaxDistance then
-                    local isTeam = Config.Visuals.TeamCheck and player.Team == LocalPlayer.Team
-                    local color = isTeam and Color3.fromRGB(50, 200, 50) or GOLD_COLOR
+                if onScreen and dist <= _0xd.Visuals.MaxDistance then
+                    local isTeam = _0xd.Visuals.TeamCheck and player.Team == _0x7.Team
+                    local color = isTeam and Color3.fromRGB(50, 200, 50) or _0xe
                     
-                    if Config.Visuals.Boxes and drawings.Box then
+                    if _0xd.Visuals.Boxes and drawings.Box then
                         local size = Vector2.new(2000/dist * 2, 2000/dist * 3)
                         drawings.Box.Visible = true
                         drawings.Box.Size = size
                         drawings.Box.Position = Vector2.new(pos.X - size.X/2, pos.Y - size.Y/2)
                         drawings.Box.Color = color
-                        drawings.Box.Thickness = 2
-                        drawings.Box.Filled = false
                     elseif drawings.Box then
                         drawings.Box.Visible = false
                     end
                     
-                    if Config.Visuals.Names and drawings.Name then
+                    if _0xd.Visuals.Names and drawings.Name then
                         drawings.Name.Visible = true
                         drawings.Name.Text = player.Name
                         drawings.Name.Position = Vector2.new(pos.X, pos.Y - (2000/dist * 1.5) - 15)
-                        drawings.Name.Color = TEXT_GOLD
+                        drawings.Name.Color = _0x14
                     elseif drawings.Name then
                         drawings.Name.Visible = false
                     end
                     
-                    if Config.Visuals.Health and drawings.Health then
+                    if _0xd.Visuals.Health and drawings.Health then
+                        local healthPercent = hum.Health / hum.MaxHealth
                         drawings.Health.Visible = true
                         drawings.Health.Text = math.floor(hum.Health) .. " HP"
                         drawings.Health.Position = Vector2.new(pos.X, pos.Y + (2000/dist * 1.5) + 5)
-                        drawings.Health.Color = TEXT_GOLD
+                        drawings.Health.Color = Color3.fromRGB(
+                            255 * (1 - healthPercent),
+                            255 * healthPercent,
+                            0
+                        )
                     elseif drawings.Health then
                         drawings.Health.Visible = false
                     end
                     
-                    if Config.Visuals.Distance and drawings.Distance then
+                    if _0xd.Visuals.Distance and drawings.Distance then
                         drawings.Distance.Visible = true
                         drawings.Distance.Text = math.floor(dist) .. " studs"
                         drawings.Distance.Position = Vector2.new(pos.X, pos.Y + (2000/dist * 1.5) + 25)
-                        drawings.Distance.Color = TEXT_GOLD
+                        drawings.Distance.Color = _0x14
                     elseif drawings.Distance then
                         drawings.Distance.Visible = false
+                    end
+                    
+                    if _0xd.Visuals.Tracers and drawings.Tracer then
+                        drawings.Tracer.Visible = true
+                        drawings.Tracer.From = Vector2.new(_0x8.ViewportSize.X/2, _0x8.ViewportSize.Y)
+                        drawings.Tracer.To = Vector2.new(pos.X, pos.Y)
+                        drawings.Tracer.Color = color
+                    elseif drawings.Tracer then
+                        drawings.Tracer.Visible = false
                     end
                 else
                     for _, d in pairs(drawings) do 
@@ -213,89 +252,431 @@ if pcall(function() DrawingLib = Drawing or drawing end) and DrawingLib then
         end
     end
 
-    RunService.RenderStepped:Connect(function() 
-        pcall(function() 
-            ESP:Update() 
-        end) 
-    end)
-    
-    for _, p in ipairs(Players:GetPlayers()) do 
-        pcall(function() 
-            ESP:AddPlayer(p) 
-        end) 
-    end
-    
-    Players.PlayerAdded:Connect(function(p)
-        pcall(function() 
-            ESP:AddPlayer(p) 
-        end)
-    end)
-    
-    Players.PlayerRemoving:Connect(function(p)
-        pcall(function()
-            if ESP.Drawings[p] then
-                for _, d in pairs(ESP.Drawings[p]) do
-                    if d then
-                        d:Remove()
-                    end
-                end
-                ESP.Drawings[p] = nil
+    function _0x19:RemovePlayer(player)
+        if self.Drawings[player] then
+            for _, d in pairs(self.Drawings[player]) do
+                if d then d:Remove() end
             end
-        end)
-    end)
-else
-    warn("Drawing library not available. ESP features disabled.")
+            self.Drawings[player] = nil
+        end
+    end
+
+    function _0x19:ClearAll()
+        for player, _ in pairs(self.Drawings) do
+            self:RemovePlayer(player)
+        end
+    end
 end
 
---// Funções Misc
-local miscFunctions = {
-    NightModeEnabled = false,
-    FullbrightEnabled = false,
-    NoClipEnabled = false,
-    FPSBoostEnabled = false,
-    AutoClickEnabled = false,
-    AntiAFKEnabled = true
+local _0x1a = {
+    Objects = {},
+    Folder = nil
 }
 
-function miscFunctions:ToggleNightMode(state)
+function _0x1a:Init()
+    self.Folder = Instance.new("Folder")
+    self.Folder.Name = "ESPStorage_" .. _0x1:GetService("HttpService"):GenerateGUID(false)
+    self.Folder.Parent = _0x1:GetService("CoreGui")
+end
+
+function _0x1a:AddPlayer(player)
+    if player == _0x7 then return end
+    if self.Objects[player] then return end
+    
+    self.Objects[player] = {}
+    
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "ESP_" .. player.Name
+    billboard.AlwaysOnTop = true
+    billboard.Size = UDim2.new(0, 200, 0, 100)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.Parent = self.Folder
+    
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.Size = UDim2.new(1, 0, 0.3, 0)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.TextColor3 = _0x14
+    nameLabel.TextStrokeTransparency = 0.5
+    nameLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+    nameLabel.Font = Enum.Font.SourceSansBold
+    nameLabel.TextSize = 16
+    nameLabel.Text = player.Name
+    nameLabel.Parent = billboard
+    
+    local healthLabel = Instance.new("TextLabel")
+    healthLabel.Size = UDim2.new(1, 0, 0.3, 0)
+    healthLabel.Position = UDim2.new(0, 0, 0.3, 0)
+    healthLabel.BackgroundTransparency = 1
+    healthLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+    healthLabel.TextStrokeTransparency = 0.5
+    healthLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+    healthLabel.Font = Enum.Font.SourceSans
+    healthLabel.TextSize = 14
+    healthLabel.Parent = billboard
+    
+    local distLabel = Instance.new("TextLabel")
+    distLabel.Size = UDim2.new(1, 0, 0.3, 0)
+    distLabel.Position = UDim2.new(0, 0, 0.6, 0)
+    distLabel.BackgroundTransparency = 1
+    distLabel.TextColor3 = _0x14
+    distLabel.TextStrokeTransparency = 0.5
+    distLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+    distLabel.Font = Enum.Font.SourceSans
+    distLabel.TextSize = 12
+    distLabel.Parent = billboard
+    
+    self.Objects[player].Billboard = billboard
+    self.Objects[player].NameLabel = nameLabel
+    self.Objects[player].HealthLabel = healthLabel
+    self.Objects[player].DistLabel = distLabel
+    
+    local box = Instance.new("SelectionBox")
+    box.LineThickness = 0.03
+    box.Color3 = _0xe
+    box.SurfaceTransparency = 0.9
+    box.Parent = self.Folder
+    
+    self.Objects[player].Box = box
+    
+    local highlight = Instance.new("Highlight")
+    highlight.FillTransparency = 0.7
+    highlight.OutlineTransparency = 0.3
+    highlight.FillColor = _0xe
+    highlight.OutlineColor = _0x10
+    highlight.Parent = self.Folder
+    
+    self.Objects[player].Highlight = highlight
+end
+
+function _0x1a:Update()
+    if not _0xd.Visuals.Enabled or _0xc.Active then
+        for _, obj in pairs(self.Objects) do
+            if obj.Billboard then obj.Billboard.Enabled = false end
+            if obj.Box then obj.Box.Visible = false end
+            if obj.Highlight then obj.Highlight.Enabled = false end
+        end
+        return
+    end
+    
+    if _0xd.Visuals.Mode ~= "Internal" and _0xd.Visuals.Mode ~= "Hybrid" then
+        for _, obj in pairs(self.Objects) do
+            if obj.Billboard then obj.Billboard.Enabled = false end
+            if obj.Box then obj.Box.Visible = false end
+            if obj.Highlight then obj.Highlight.Enabled = false end
+        end
+        return
+    end
+    
+    for player, obj in pairs(self.Objects) do
+        if not player or not player.Parent or not player.Character then
+            if obj.Billboard then obj.Billboard.Enabled = false end
+            if obj.Box then obj.Box.Visible = false end
+            if obj.Highlight then obj.Highlight.Enabled = false end
+            continue
+        end
+        
+        local char = player.Character
+        local root = char:FindFirstChild("HumanoidRootPart")
+        local hum = char:FindFirstChild("Humanoid")
+        
+        if root and hum and hum.Health > 0 then
+            local dist = (_0x8.CFrame.Position - root.Position).Magnitude
+            local isTeam = _0xd.Visuals.TeamCheck and player.Team == _0x7.Team
+            
+            if dist <= _0xd.Visuals.MaxDistance then
+                local color = isTeam and Color3.fromRGB(50, 200, 50) or _0xe
+                
+                if _0xd.Visuals.Names or _0xd.Visuals.Health or _0xd.Visuals.Distance then
+                    obj.Billboard.Enabled = true
+                    obj.Billboard.Adornee = root
+                    
+                    obj.NameLabel.Visible = _0xd.Visuals.Names
+                    obj.HealthLabel.Visible = _0xd.Visuals.Health
+                    obj.DistLabel.Visible = _0xd.Visuals.Distance
+                    
+                    if _0xd.Visuals.Health then
+                        local healthPercent = hum.Health / hum.MaxHealth
+                        obj.HealthLabel.Text = math.floor(hum.Health) .. " HP"
+                        obj.HealthLabel.TextColor3 = Color3.fromRGB(
+                            255 * (1 - healthPercent),
+                            255 * healthPercent,
+                            0
+                        )
+                    end
+                    
+                    if _0xd.Visuals.Distance then
+                        obj.DistLabel.Text = math.floor(dist) .. " studs"
+                    end
+                else
+                    obj.Billboard.Enabled = false
+                end
+                
+                if _0xd.Visuals.Boxes and obj.Box then
+                    obj.Box.Visible = true
+                    obj.Box.Adornee = char
+                    obj.Box.Color3 = color
+                else
+                    obj.Box.Visible = false
+                end
+                
+                if _0xd.Visuals.Highlight and obj.Highlight then
+                    obj.Highlight.Enabled = true
+                    obj.Highlight.Adornee = char
+                    obj.Highlight.FillColor = color
+                    obj.Highlight.OutlineColor = isTeam and Color3.fromRGB(100, 255, 100) or _0x10
+                else
+                    obj.Highlight.Enabled = false
+                end
+            else
+                obj.Billboard.Enabled = false
+                if obj.Box then obj.Box.Visible = false end
+                if obj.Highlight then obj.Highlight.Enabled = false end
+            end
+        else
+            obj.Billboard.Enabled = false
+            if obj.Box then obj.Box.Visible = false end
+            if obj.Highlight then obj.Highlight.Enabled = false end
+        end
+    end
+end
+
+function _0x1a:RemovePlayer(player)
+    if self.Objects[player] then
+        if self.Objects[player].Billboard then self.Objects[player].Billboard:Destroy() end
+        if self.Objects[player].Box then self.Objects[player].Box:Destroy() end
+        if self.Objects[player].Highlight then self.Objects[player].Highlight:Destroy() end
+        self.Objects[player] = nil
+    end
+end
+
+function _0x1a:ClearAll()
+    for player, _ in pairs(self.Objects) do
+        self:RemovePlayer(player)
+    end
+end
+
+_0x1a:Init()
+
+_0x2.RenderStepped:Connect(function()
+    pcall(function()
+        _0x1a:Update()
+        if _0x18 then
+            _0x19:Update()
+        end
+    end)
+end)
+
+for _, p in ipairs(_0x4:GetPlayers()) do
+    pcall(function()
+        _0x1a:AddPlayer(p)
+        if _0x18 then
+            _0x19:AddPlayer(p)
+        end
+    end)
+end
+
+_0x4.PlayerAdded:Connect(function(p)
+    pcall(function()
+        _0x1a:AddPlayer(p)
+        if _0x18 then
+            _0x19:AddPlayer(p)
+        end
+    end)
+end)
+
+_0x4.PlayerRemoving:Connect(function(p)
+    pcall(function()
+        _0x1a:RemovePlayer(p)
+        if _0x18 then
+            _0x19:RemovePlayer(p)
+        end
+    end)
+end)
+
+function _0xc:Activate()
+    if self.Active then return end
+    
+    print("🚨 PANIC MODE ATIVADO! Desativando tudo...")
+    
+    self.Active = true
+    
+    self.SavedConfig = {
+        Aimbot = {
+            Enabled = _0xd.Aimbot.Enabled,
+            FOV = _0xd.Aimbot.FOV,
+            Smoothness = _0xd.Aimbot.Smoothness,
+        },
+        Visuals = {
+            Enabled = _0xd.Visuals.Enabled,
+            Mode = _0xd.Visuals.Mode,
+            Boxes = _0xd.Visuals.Boxes,
+            Names = _0xd.Visuals.Names,
+            Health = _0xd.Visuals.Health,
+            Highlight = _0xd.Visuals.Highlight,
+        },
+        Misc = {
+            NightMode = _0xd.Misc.NightMode,
+            Fullbright = _0xd.Misc.Fullbright,
+            NoClip = _0xd.Misc.NoClip,
+            WalkSpeed = _0xd.Misc.WalkSpeed,
+            JumpPower = _0xd.Misc.JumpPower,
+            FPSBoost = _0xd.Misc.FPSBoost,
+            AutoClick = _0xd.Misc.AutoClick,
+        }
+    }
+    
+    _0xd.Aimbot.Enabled = false
+    if getgenv().Aimbot then
+        getgenv().Aimbot.Enabled = false
+        getgenv().Aimbot.FOVSettings.Visible = false
+    end
+    
+    _0xd.Visuals.Enabled = false
+    _0xd.Visuals.Boxes = false
+    _0xd.Visuals.Names = false
+    _0xd.Visuals.Health = false
+    _0xd.Visuals.Highlight = false
+    
+    _0xd.Misc.NoClip = false
+    _0xd.Misc.AutoClick = false
+    
+    if _0x7.Character then
+        local humanoid = _0x7.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = 16
+            humanoid.JumpPower = 50
+        end
+    end
+    
+    pcall(function()
+        local cc = _0x6:FindFirstChild("NataMenu_NightMode")
+        if cc then cc:Destroy() end
+        
+        local sky = _0x6:FindFirstChild("NataMenu_Sky")
+        if sky then sky:Destroy() end
+        
+        local skyTint = _0x6:FindFirstChild("NataMenu_SkyTint")
+        if skyTint then skyTint:Destroy() end
+    end)
+    
+    _0x6.GlobalShadows = true
+    _0x6.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+    _0x6.Brightness = 1
+    
+    pcall(function()
+        local screenGui = _0x1:GetService("CoreGui"):FindFirstChild("NataMenu")
+        if screenGui then screenGui.Enabled = false end
+        
+        local watermark = _0x1:GetService("CoreGui"):FindFirstChild("NataMenuWatermark")
+        if watermark then watermark.Enabled = false end
+    end)
+    
+    print("✅ PANIC MODE: Tudo desativado! Você está clean!")
+end
+
+function _0xc:Deactivate()
+    if not self.Active then return end
+    
+    print("🔄 PANIC MODE DESATIVADO! Restaurando configurações...")
+    
+    self.Active = false
+    
+    if self.SavedConfig then
+        _0xd.Aimbot.Enabled = self.SavedConfig.Aimbot.Enabled
+        _0xd.Aimbot.FOV = self.SavedConfig.Aimbot.FOV
+        _0xd.Aimbot.Smoothness = self.SavedConfig.Aimbot.Smoothness
+        
+        _0xd.Visuals.Enabled = self.SavedConfig.Visuals.Enabled
+        _0xd.Visuals.Mode = self.SavedConfig.Visuals.Mode
+        _0xd.Visuals.Boxes = self.SavedConfig.Visuals.Boxes
+        _0xd.Visuals.Names = self.SavedConfig.Visuals.Names
+        _0xd.Visuals.Health = self.SavedConfig.Visuals.Health
+        _0xd.Visuals.Highlight = self.SavedConfig.Visuals.Highlight
+        
+        _0xd.Misc.NightMode = self.SavedConfig.Misc.NightMode
+        _0xd.Misc.Fullbright = self.SavedConfig.Misc.Fullbright
+        _0xd.Misc.NoClip = self.SavedConfig.Misc.NoClip
+        _0xd.Misc.WalkSpeed = self.SavedConfig.Misc.WalkSpeed
+        _0xd.Misc.JumpPower = self.SavedConfig.Misc.JumpPower
+        _0xd.Misc.FPSBoost = self.SavedConfig.Misc.FPSBoost
+        _0xd.Misc.AutoClick = self.SavedConfig.Misc.AutoClick
+        
+        if getgenv().Aimbot then
+            getgenv().Aimbot.Enabled = _0xd.Aimbot.Enabled
+            getgenv().Aimbot.FOV = _0xd.Aimbot.FOV
+            getgenv().Aimbot.Smoothness = _0xd.Aimbot.Smoothness
+            getgenv().Aimbot.FOVSettings.Visible = _0xd.Aimbot.Enabled
+        end
+        
+        if _0x7.Character then
+            local humanoid = _0x7.Character:FindFirstChild("Humanoid")
+            if humanoid then
+                humanoid.WalkSpeed = _0xd.Misc.WalkSpeed
+                humanoid.JumpPower = _0xd.Misc.JumpPower
+            end
+        end
+    end
+    
+    pcall(function()
+        local screenGui = _0x1:GetService("CoreGui"):FindFirstChild("NataMenu")
+        if screenGui then screenGui.Enabled = true end
+        
+        local watermark = _0x1:GetService("CoreGui"):FindFirstChild("NataMenuWatermark")
+        if watermark then watermark.Enabled = true end
+    end)
+    
+    print("✅ Configurações restauradas!")
+end
+
+function _0xc:Toggle()
+    if self.Active then
+        self:Deactivate()
+    else
+        self:Activate()
+    end
+end
+
+local _0x1b = {}
+
+function _0x1b:ToggleNightMode(state)
     if state then
-        local cc = Lighting:FindFirstChild("NataMenu_NightMode")
+        local cc = _0x6:FindFirstChild("NataMenu_NightMode")
         if not cc then
             cc = Instance.new("ColorCorrectionEffect")
             cc.Name = "NataMenu_NightMode"
-            cc.Parent = Lighting
+            cc.Parent = _0x6
         end
         cc.Brightness = -0.1
         cc.Contrast = 0.1
         cc.TintColor = Color3.fromRGB(150, 120, 50)
         cc.Saturation = -0.2
     else
-        local cc = Lighting:FindFirstChild("NataMenu_NightMode")
+        local cc = _0x6:FindFirstChild("NataMenu_NightMode")
         if cc then cc:Destroy() end
     end
 end
 
-function miscFunctions:ToggleFullbright(state)
+function _0x1b:ToggleFullbright(state)
     if state then
-        Lighting.GlobalShadows = false
-        Lighting.OutdoorAmbient = Color3.fromRGB(220, 200, 160)
-        Lighting.Brightness = 1.5
-        Lighting.ClockTime = 14
+        _0x6.GlobalShadows = false
+        _0x6.OutdoorAmbient = Color3.fromRGB(220, 200, 160)
+        _0x6.Brightness = 1.5
+        _0x6.ClockTime = 14
     else
-        Lighting.GlobalShadows = true
-        Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
-        Lighting.Brightness = 1
-        Lighting.ClockTime = 14
+        _0x6.GlobalShadows = true
+        _0x6.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+        _0x6.Brightness = 1
+        _0x6.ClockTime = 14
     end
 end
 
-function miscFunctions:ToggleNoClip(state)
-    Config.Misc.NoClip = state
+function _0x1b:ToggleNoClip(state)
+    _0xd.Misc.NoClip = state
 end
 
-function miscFunctions:SetWalkSpeed(speed)
-    Config.Misc.WalkSpeed = speed
-    local character = LocalPlayer.Character
+function _0x1b:SetWalkSpeed(speed)
+    _0xd.Misc.WalkSpeed = speed
+    local character = _0x7.Character
     if character then
         local humanoid = character:FindFirstChild("Humanoid")
         if humanoid then
@@ -304,9 +685,9 @@ function miscFunctions:SetWalkSpeed(speed)
     end
 end
 
-function miscFunctions:SetJumpPower(power)
-    Config.Misc.JumpPower = power
-    local character = LocalPlayer.Character
+function _0x1b:SetJumpPower(power)
+    _0xd.Misc.JumpPower = power
+    local character = _0x7.Character
     if character then
         local humanoid = character:FindFirstChild("Humanoid")
         if humanoid then
@@ -315,14 +696,14 @@ function miscFunctions:SetJumpPower(power)
     end
 end
 
-function miscFunctions:ToggleFPSBoost(state)
+function _0x1b:ToggleFPSBoost(state)
     if state then
         settings().Rendering.QualityLevel = 1
         settings().Rendering.MeshPartDetailLevel = Enum.MeshPartDetailLevel.Level01
-        if Workspace.Terrain then
-            Workspace.Terrain.WaterReflection = false
-            Workspace.Terrain.WaterWaveSize = 0
-            Workspace.Terrain.WaterWaveSpeed = 0
+        if _0x5.Terrain then
+            _0x5.Terrain.WaterReflection = false
+            _0x5.Terrain.WaterWaveSize = 0
+            _0x5.Terrain.WaterWaveSpeed = 0
         end
     else
         settings().Rendering.QualityLevel = 21
@@ -330,11 +711,11 @@ function miscFunctions:ToggleFPSBoost(state)
     end
 end
 
-function miscFunctions:ToggleAutoClick(state)
-    Config.Misc.AutoClick = state
+function _0x1b:ToggleAutoClick(state)
+    _0xd.Misc.AutoClick = state
     if state then
         spawn(function()
-            while Config.Misc.AutoClick do
+            while _0xd.Misc.AutoClick do
                 pcall(function()
                     mouse1click()
                 end)
@@ -344,52 +725,51 @@ function miscFunctions:ToggleAutoClick(state)
     end
 end
 
-function miscFunctions:ToggleAntiAFK(state)
-    Config.Misc.AntiAFK = state
+function _0x1b:ToggleAntiAFK(state)
+    _0xd.Misc.AntiAFK = state
     if state then
-        local VirtualUser = game:GetService("VirtualUser")
-        LocalPlayer.Idled:Connect(function()
-            if Config.Misc.AntiAFK then
-                VirtualUser:Button2Down(Vector2.new(0,0), Workspace.CurrentCamera.CFrame)
+        local VirtualUser = _0x1:GetService("VirtualUser")
+        _0x7.Idled:Connect(function()
+            if _0xd.Misc.AntiAFK then
+                VirtualUser:Button2Down(Vector2.new(0,0), _0x5.CurrentCamera.CFrame)
                 wait(1)
-                VirtualUser:Button2Up(Vector2.new(0,0), Workspace.CurrentCamera.CFrame)
+                VirtualUser:Button2Up(Vector2.new(0,0), _0x5.CurrentCamera.CFrame)
             end
         end)
     end
 end
 
-function miscFunctions:ToggleBypass(state)
-    Config.Misc.Bypass = state
+function _0x1b:ToggleBypass(state)
+    _0xd.Misc.Bypass = state
     if state then
-        SetupBypass()
+        _0x17()
     end
 end
 
-function miscFunctions:ShowCredits()
-    local creditsGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+function _0x1b:ShowCredits()
+    local creditsGui = Instance.new("ScreenGui", _0x1:GetService("CoreGui"))
     creditsGui.Name = "NataMenuCredits"
     
     local Main = Instance.new("Frame", creditsGui)
-    Main.Size = UDim2.new(0, 300, 0, 200)
-    Main.Position = UDim2.new(0.5, -150, 0.5, -100)
-    Main.BackgroundColor3 = BLACK_BG
+    Main.Size = UDim2.new(0, 320, 0, 250)
+    Main.Position = UDim2.new(0.5, -160, 0.5, -125)
+    Main.BackgroundColor3 = _0x11
     Main.BorderSizePixel = 2
-    Main.BorderColor3 = GOLD_COLOR
+    Main.BorderColor3 = _0xe
     
-    -- Fundo topográfico nos créditos também
     local CreditsDecal = Instance.new("ImageLabel", Main)
     CreditsDecal.Size = UDim2.new(1, 0, 1, 0)
-    CreditsDecal.Image = "rbxassetid://" .. TOPOGRAPHIC_DECAL_ID
+    CreditsDecal.Image = "rbxassetid://" .. _0xb
     CreditsDecal.ImageTransparency = 0.7
     CreditsDecal.BackgroundTransparency = 1
     CreditsDecal.ScaleType = Enum.ScaleType.Tile
     CreditsDecal.TileSize = UDim2.new(0, 100, 0, 100)
     
     local Title = Instance.new("TextLabel", Main)
-    Title.Text = "NATA.MENU - TOPOGRAPHIC"
+    Title.Text = "NATA.MENU - HYBRID ESP"
     Title.Size = UDim2.new(1, 0, 0, 40)
     Title.Position = UDim2.new(0, 0, 0, 10)
-    Title.TextColor3 = TEXT_GOLD
+    Title.TextColor3 = _0x14
     Title.Font = Enum.Font.SourceSansBold
     Title.TextSize = 18
     Title.BackgroundTransparency = 1
@@ -398,8 +778,8 @@ function miscFunctions:ShowCredits()
     local Designer = Instance.new("TextLabel", Main)
     Designer.Text = "Designer: Farpa"
     Designer.Size = UDim2.new(1, 0, 0, 30)
-    Designer.Position = UDim2.new(0, 0, 0, 60)
-    Designer.TextColor3 = TEXT_GOLD
+    Designer.Position = UDim2.new(0, 0, 0, 55)
+    Designer.TextColor3 = _0x14
     Designer.Font = Enum.Font.SourceSans
     Designer.TextSize = 16
     Designer.BackgroundTransparency = 1
@@ -408,33 +788,53 @@ function miscFunctions:ShowCredits()
     local Programmer = Instance.new("TextLabel", Main)
     Programmer.Text = "Programmer: Toque"
     Programmer.Size = UDim2.new(1, 0, 0, 30)
-    Programmer.Position = UDim2.new(0, 0, 0, 90)
-    Programmer.TextColor3 = TEXT_GOLD
+    Programmer.Position = UDim2.new(0, 0, 0, 85)
+    Programmer.TextColor3 = _0x14
     Programmer.Font = Enum.Font.SourceSans
     Programmer.TextSize = 16
     Programmer.BackgroundTransparency = 1
     Programmer.ZIndex = 2
     
-    local Version = Instance.new("TextLabel", Main)
-    Version.Text = "Theme: Topographic Decal"
-    Version.Size = UDim2.new(1, 0, 0, 30)
-    Version.Position = UDim2.new(0, 0, 0, 120)
-    Version.TextColor3 = TEXT_GOLD
-    Version.Font = Enum.Font.SourceSans
-    Version.TextSize = 14
-    Version.BackgroundTransparency = 1
-    Version.ZIndex = 2
+    local ESPInfo = Instance.new("TextLabel", Main)
+    ESPInfo.Text = "✨ Internal + Drawing ESP"
+    ESPInfo.Size = UDim2.new(1, 0, 0, 30)
+    ESPInfo.Position = UDim2.new(0, 0, 0, 115)
+    ESPInfo.TextColor3 = _0x14
+    ESPInfo.Font = Enum.Font.SourceSans
+    ESPInfo.TextSize = 14
+    ESPInfo.BackgroundTransparency = 1
+    ESPInfo.ZIndex = 2
+    
+    local ModeInfo = Instance.new("TextLabel", Main)
+    ModeInfo.Text = "🎯 3 Modos: Internal/Drawing/Hybrid"
+    ModeInfo.Size = UDim2.new(1, 0, 0, 30)
+    ModeInfo.Position = UDim2.new(0, 0, 0, 145)
+    ModeInfo.TextColor3 = _0x10
+    ModeInfo.Font = Enum.Font.SourceSans
+    ModeInfo.TextSize = 13
+    ModeInfo.BackgroundTransparency = 1
+    ModeInfo.ZIndex = 2
+    
+    local PanicInfo = Instance.new("TextLabel", Main)
+    PanicInfo.Text = "🚨 PANIC MODE: F6"
+    PanicInfo.Size = UDim2.new(1, 0, 0, 30)
+    PanicInfo.Position = UDim2.new(0, 0, 0, 175)
+    PanicInfo.TextColor3 = _0x15
+    PanicInfo.Font = Enum.Font.SourceSansBold
+    PanicInfo.TextSize = 14
+    PanicInfo.BackgroundTransparency = 1
+    PanicInfo.ZIndex = 2
     
     local CloseBtn = Instance.new("TextButton", Main)
     CloseBtn.Text = "Close"
     CloseBtn.Size = UDim2.new(0, 80, 0, 30)
     CloseBtn.Position = UDim2.new(0.5, -40, 1, -40)
-    CloseBtn.BackgroundColor3 = DARK_GOLD
-    CloseBtn.TextColor3 = TEXT_GOLD
+    CloseBtn.BackgroundColor3 = _0xf
+    CloseBtn.TextColor3 = _0x14
     CloseBtn.Font = Enum.Font.SourceSans
     CloseBtn.TextSize = 14
     CloseBtn.BorderSizePixel = 1
-    CloseBtn.BorderColor3 = GOLD_COLOR
+    CloseBtn.BorderColor3 = _0xe
     CloseBtn.ZIndex = 2
     
     CloseBtn.MouseButton1Click:Connect(function()
@@ -442,82 +842,80 @@ function miscFunctions:ShowCredits()
     end)
 end
 
---// Menu UI
-local Menu = {Tabs = {}}
+local _0x1c = {Tabs = {}}
 
-function Menu:Init()
-    local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+function _0x1c:Init()
+    local ScreenGui = Instance.new("ScreenGui", _0x1:GetService("CoreGui"))
     ScreenGui.Name = "NataMenu"
     ScreenGui.Enabled = true
     
-    -- Frame principal
     local Main = Instance.new("Frame", ScreenGui)
     Main.Size = UDim2.new(0, 520, 0, 350)
     Main.Position = UDim2.new(0.5, -260, 0.5, -175)
-    Main.BackgroundColor3 = BLACK_BG
+    Main.BackgroundColor3 = _0x11
     Main.BorderSizePixel = 2
-    Main.BorderColor3 = GOLD_COLOR
+    Main.BorderColor3 = _0xe
     
-    -- FUNDO TOPOGRÁFICO COM DECAL
-    local TopographicBackground = Instance.new("ImageLabel", Main)
-    TopographicBackground.Size = UDim2.new(1, 0, 1, 0)
-    TopographicBackground.Image = "rbxassetid://" .. TOPOGRAPHIC_DECAL_ID
-    TopographicBackground.BackgroundTransparency = 1
-    TopographicBackground.ScaleType = Enum.ScaleType.Stretch  -- Ajusta ao tamanho do frame
-    TopographicBackground.ImageTransparency = 0.1  -- Levemente transparente para não sobrecarregar
+    local BackgroundImage = Instance.new("ImageLabel", Main)
+    BackgroundImage.Size = UDim2.new(1, 0, 1, 0)
+    BackgroundImage.Image = "rbxassetid://" .. _0xb
+    BackgroundImage.BackgroundTransparency = 1
+    BackgroundImage.ScaleType = Enum.ScaleType.Stretch
+    BackgroundImage.ImageTransparency = 0.15
     
-    -- Efeito de brilho suave no decal
-    local BackgroundGradient = Instance.new("UIGradient", TopographicBackground)
+    local DarkOverlay = Instance.new("Frame", Main)
+    DarkOverlay.Size = UDim2.new(1, 0, 1, 0)
+    DarkOverlay.BackgroundColor3 = _0x11
+    DarkOverlay.BackgroundTransparency = 0.3
+    
+    local BackgroundGradient = Instance.new("UIGradient", DarkOverlay)
     BackgroundGradient.Rotation = 90
     BackgroundGradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 50, 50)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 100, 100)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(50, 50, 50))
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(20, 20, 20)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
     })
     BackgroundGradient.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0.8),
-        NumberSequenceKeypoint.new(0.5, 0.6),
-        NumberSequenceKeypoint.new(1, 0.8)
+        NumberSequenceKeypoint.new(0, 0.7),
+        NumberSequenceKeypoint.new(0.5, 0.5),
+        NumberSequenceKeypoint.new(1, 0.7)
     })
     
     local Sidebar = Instance.new("Frame", Main)
     Sidebar.Size = UDim2.new(0, 140, 1, 0)
-    Sidebar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    Sidebar.BackgroundTransparency = 0.7
+    Sidebar.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+    Sidebar.BackgroundTransparency = 0.8
     Sidebar.BorderSizePixel = 1
-    Sidebar.BorderColor3 = DARK_GOLD
-    Sidebar.ZIndex = 2  -- Garantir que fique acima do fundo
+    Sidebar.BorderColor3 = _0xf
+    Sidebar.ZIndex = 2
 
-    -- Logo com fundo escuro para melhor contraste
     local LogoFrame = Instance.new("Frame", Sidebar)
     LogoFrame.Size = UDim2.new(1, 0, 0, 100)
-    LogoFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-    LogoFrame.BackgroundTransparency = 0.3
+    LogoFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    LogoFrame.BackgroundTransparency = 0.4
     LogoFrame.BorderSizePixel = 1
-    LogoFrame.BorderColor3 = GOLD_COLOR
+    LogoFrame.BorderColor3 = _0xe
     LogoFrame.ZIndex = 3
     
-    local Logo = Instance.new("ImageLabel", LogoFrame)
-    Logo.Size = UDim2.new(0.8, 0, 0.8, 0)
-    Logo.Position = UDim2.new(0.1, 0, 0.1, 0)
-    Logo.Image = "rbxassetid://89204033406625"
+    local LogoContainer = Instance.new("Frame", LogoFrame)
+    LogoContainer.Size = UDim2.new(0.8, 0, 0.8, 0)
+    LogoContainer.Position = UDim2.new(0.1, 0, 0.1, 0)
+    LogoContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    LogoContainer.BackgroundTransparency = 1
+    LogoContainer.ClipsDescendants = true
+    
+    local Corner = Instance.new("UICorner", LogoContainer)
+    Corner.CornerRadius = UDim.new(0, 12)
+    
+    local Logo = Instance.new("ImageLabel", LogoContainer)
+    Logo.Size = UDim2.new(1, 0, 1, 0)
+    Logo.Image = "rbxassetid://" .. _0xa
     Logo.BackgroundTransparency = 1
     Logo.ScaleType = Enum.ScaleType.Fit
     Logo.ZIndex = 3
     
-    -- Efeito dourado no logo
-    local LogoGlow = Instance.new("UIGradient", Logo)
-    LogoGlow.Rotation = 90
-    LogoGlow.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 215, 0)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 150)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 215, 0))
-    })
-    LogoGlow.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0.4),
-        NumberSequenceKeypoint.new(0.5, 0.2),
-        NumberSequenceKeypoint.new(1, 0.4)
-    })
+    local LogoFrameCorner = Instance.new("UICorner", LogoFrame)
+    LogoFrameCorner.CornerRadius = UDim.new(0, 8)
 
     local TabContainer = Instance.new("Frame", Sidebar)
     TabContainer.Position = UDim2.new(0, 0, 0, 110)
@@ -532,12 +930,12 @@ function Menu:Init()
     local ContentArea = Instance.new("ScrollingFrame", Main)
     ContentArea.Position = UDim2.new(0, 150, 0, 10)
     ContentArea.Size = UDim2.new(1, -160, 1, -20)
-    ContentArea.BackgroundTransparency = 0.7
-    ContentArea.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    ContentArea.BackgroundTransparency = 0.8
+    ContentArea.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
     ContentArea.BorderSizePixel = 1
-    ContentArea.BorderColor3 = DARK_GOLD
+    ContentArea.BorderColor3 = _0xf
     ContentArea.ScrollBarThickness = 3
-    ContentArea.ScrollBarImageColor3 = GOLD_COLOR
+    ContentArea.ScrollBarImageColor3 = _0xe
     ContentArea.ZIndex = 2
     
     local ContentLayout = Instance.new("UIListLayout", ContentArea)
@@ -546,26 +944,29 @@ function Menu:Init()
     local function SyncAimbot()
         if getgenv().Aimbot then
             local AB = getgenv().Aimbot
-            AB.Enabled = Config.Aimbot.Enabled
-            AB.FOV = Config.Aimbot.FOV
-            AB.Smoothness = Config.Aimbot.Smoothness
-            AB.TargetPart = Config.Aimbot.TargetPart
+            AB.Enabled = _0xd.Aimbot.Enabled
+            AB.FOV = _0xd.Aimbot.FOV
+            AB.Smoothness = _0xd.Aimbot.Smoothness
+            AB.TargetPart = _0xd.Aimbot.TargetPart
         end
     end
 
-    function Menu:CreateTab(name, icon)
+    function _0x1c:CreateTab(name, icon)
         local TabBtn = Instance.new("TextButton", TabContainer)
         TabBtn.Size = UDim2.new(1, 0, 0, 35)
-        TabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        TabBtn.BackgroundTransparency = 0.3
+        TabBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        TabBtn.BackgroundTransparency = 0.4
         TabBtn.Text = icon .. " " .. name
-        TabBtn.TextColor3 = TEXT_GOLD
+        TabBtn.TextColor3 = _0x14
         TabBtn.Font = Enum.Font.SourceSans
         TabBtn.TextSize = 13
         TabBtn.BorderSizePixel = 1
-        TabBtn.BorderColor3 = DARK_GOLD
+        TabBtn.BorderColor3 = _0xf
         TabBtn.TextXAlignment = Enum.TextXAlignment.Left
         TabBtn.ZIndex = 3
+        
+        local TabCorner = Instance.new("UICorner", TabBtn)
+        TabCorner.CornerRadius = UDim.new(0, 6)
 
         local Page = Instance.new("ScrollingFrame", ContentArea)
         Page.Size = UDim2.new(1, 0, 1, 0)
@@ -579,19 +980,19 @@ function Menu:Init()
         PageLayout.Padding = UDim.new(0, 10)
 
         TabBtn.MouseButton1Click:Connect(function()
-            for _, v in pairs(Menu.Tabs) do
+            for _, v in pairs(_0x1c.Tabs) do
                 v.Page.Visible = false
-                v.Btn.TextColor3 = TEXT_GOLD
-                v.Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-                v.Btn.BackgroundTransparency = 0.3
+                v.Btn.TextColor3 = _0x14
+                v.Btn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+                v.Btn.BackgroundTransparency = 0.4
             end
             Page.Visible = true
             TabBtn.TextColor3 = Color3.new(1, 1, 1)
-            TabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 30)
-            TabBtn.BackgroundTransparency = 0.2
+            TabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 20)
+            TabBtn.BackgroundTransparency = 0.3
         end)
 
-        Menu.Tabs[name] = {Page = Page, Btn = TabBtn}
+        _0x1c.Tabs[name] = {Page = Page, Btn = TabBtn}
         return Page
     end
 
@@ -604,21 +1005,24 @@ function Menu:Init()
         
         local Btn = Instance.new("TextButton", Container)
         Btn.Size = UDim2.new(1, 0, 1, 0)
-        Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        Btn.BackgroundTransparency = 0.3
+        Btn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        Btn.BackgroundTransparency = 0.4
         Btn.Text = (default and "✓ " or "✗ ") .. text
-        Btn.TextColor3 = default and TEXT_GOLD or Color3.fromRGB(150, 150, 130)
+        Btn.TextColor3 = default and _0x14 or Color3.fromRGB(150, 150, 130)
         Btn.Font = Enum.Font.SourceSans
         Btn.TextSize = 13
         Btn.TextXAlignment = Enum.TextXAlignment.Left
         Btn.BorderSizePixel = 1
-        Btn.BorderColor3 = DARK_GOLD
+        Btn.BorderColor3 = _0xf
         Btn.ZIndex = 4
+        
+        local ToggleCorner = Instance.new("UICorner", Btn)
+        ToggleCorner.CornerRadius = UDim.new(0, 6)
 
         Btn.MouseButton1Click:Connect(function()
             default = not default
             Btn.Text = (default and "✓ " or "✗ ") .. text
-            Btn.TextColor3 = default and TEXT_GOLD or Color3.fromRGB(150, 150, 130)
+            Btn.TextColor3 = default and _0x14 or Color3.fromRGB(150, 150, 130)
             if callback then
                 pcall(callback, default)
             end
@@ -637,7 +1041,7 @@ function Menu:Init()
         local Label = Instance.new("TextLabel", Container)
         Label.Text = "📏 " .. text .. ": " .. default
         Label.Size = UDim2.new(1, 0, 0, 20)
-        Label.TextColor3 = TEXT_GOLD
+        Label.TextColor3 = _0x14
         Label.BackgroundTransparency = 1
         Label.TextXAlignment = Enum.TextXAlignment.Left
         Label.Font = Enum.Font.SourceSans
@@ -648,23 +1052,29 @@ function Menu:Init()
         local Bar = Instance.new("TextButton", Container)
         Bar.Position = UDim2.new(0, 0, 0, 25)
         Bar.Size = UDim2.new(1, 0, 0, 6)
-        Bar.BackgroundColor3 = Color3.fromRGB(40, 40, 30)
+        Bar.BackgroundColor3 = Color3.fromRGB(30, 30, 20)
         Bar.BackgroundTransparency = 0.3
         Bar.Text = ""
         Bar.BorderSizePixel = 1
-        Bar.BorderColor3 = DARK_GOLD
+        Bar.BorderColor3 = _0xf
         Bar.ZIndex = 4
+        
+        local BarCorner = Instance.new("UICorner", Bar)
+        BarCorner.CornerRadius = UDim.new(0, 3)
 
         local Fill = Instance.new("Frame", Bar)
         Fill.Size = UDim2.new((default-min)/(max-min), 0, 1, 0)
-        Fill.BackgroundColor3 = GOLD_COLOR
+        Fill.BackgroundColor3 = _0xe
         Fill.BorderSizePixel = 0
         Fill.ZIndex = 4
+        
+        local FillCorner = Instance.new("UICorner", Fill)
+        FillCorner.CornerRadius = UDim.new(0, 3)
 
         Bar.MouseButton1Down:Connect(function()
             local conn
-            conn = RunService.RenderStepped:Connect(function()
-                local mp = UserInputService:GetMouseLocation().X
+            conn = _0x2.RenderStepped:Connect(function()
+                local mp = _0x3:GetMouseLocation().X
                 local per = math.clamp((mp - Bar.AbsolutePosition.X)/Bar.AbsoluteSize.X, 0, 1)
                 local val = min + (max-min)*per
                 if max <= 5 then 
@@ -679,7 +1089,7 @@ function Menu:Init()
                 end
             end)
             
-            local endedConn = UserInputService.InputEnded:Connect(function(i)
+            local endedConn = _0x3.InputEnded:Connect(function(i)
                 if i.UserInputType == Enum.UserInputType.MouseButton1 then
                     if conn then conn:Disconnect() end
                     endedConn:Disconnect()
@@ -697,16 +1107,19 @@ function Menu:Init()
 
         local Btn = Instance.new("TextButton", Container)
         Btn.Size = UDim2.new(1, 0, 1, 0)
-        Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        Btn.BackgroundTransparency = 0.3
+        Btn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        Btn.BackgroundTransparency = 0.4
         Btn.Text = "▼ " .. text .. ": " .. options[defaultIndex or 1]
-        Btn.TextColor3 = TEXT_GOLD
+        Btn.TextColor3 = _0x14
         Btn.Font = Enum.Font.SourceSans
         Btn.TextSize = 13
         Btn.TextXAlignment = Enum.TextXAlignment.Left
         Btn.BorderSizePixel = 1
-        Btn.BorderColor3 = DARK_GOLD
+        Btn.BorderColor3 = _0xf
         Btn.ZIndex = 4
+        
+        local DropdownCorner = Instance.new("UICorner", Btn)
+        DropdownCorner.CornerRadius = UDim.new(0, 6)
 
         local idx = defaultIndex or 1
         Btn.MouseButton1Click:Connect(function()
@@ -722,15 +1135,18 @@ function Menu:Init()
     local function AddButton(parent, text, icon, callback)
         local Btn = Instance.new("TextButton", parent)
         Btn.Size = UDim2.new(1, -10, 0, 35)
-        Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        Btn.BackgroundTransparency = 0.3
+        Btn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        Btn.BackgroundTransparency = 0.4
         Btn.Text = icon .. " " .. text
-        Btn.TextColor3 = TEXT_GOLD
+        Btn.TextColor3 = _0x14
         Btn.Font = Enum.Font.SourceSans
         Btn.TextSize = 13
         Btn.BorderSizePixel = 1
-        Btn.BorderColor3 = DARK_GOLD
+        Btn.BorderColor3 = _0xf
         Btn.ZIndex = 4
+        
+        local ButtonCorner = Instance.new("UICorner", Btn)
+        ButtonCorner.CornerRadius = UDim.new(0, 6)
 
         Btn.MouseButton1Click:Connect(function()
             if callback then
@@ -739,57 +1155,67 @@ function Menu:Init()
         end)
     end
 
-    -- Abas
-    local LegitPage = Menu:CreateTab("LegitBot", "🎯")
-    AddToggle(LegitPage, "Aimbot", Config.Aimbot.Enabled, function(v) 
-        Config.Aimbot.Enabled = v 
+    local LegitPage = _0x1c:CreateTab("LegitBot", "🎯")
+    AddToggle(LegitPage, "Aimbot", _0xd.Aimbot.Enabled, function(v) 
+        _0xd.Aimbot.Enabled = v 
         SyncAimbot() 
     end)
-    AddSlider(LegitPage, "Field of View", 10, 600, Config.Aimbot.FOV, function(v) 
-        Config.Aimbot.FOV = v 
+    AddSlider(LegitPage, "Field of View", 10, 600, _0xd.Aimbot.FOV, function(v) 
+        _0xd.Aimbot.FOV = v 
         SyncAimbot() 
     end)
-    AddSlider(LegitPage, "Smoothness", 0, 5, Config.Aimbot.Smoothness, function(v) 
-        Config.Aimbot.Smoothness = v 
+    AddSlider(LegitPage, "Smoothness", 0, 5, _0xd.Aimbot.Smoothness, function(v) 
+        _0xd.Aimbot.Smoothness = v 
         SyncAimbot() 
     end)
     AddDropdown(LegitPage, "Target Part", {"Head", "HumanoidRootPart", "Torso"}, 1, function(v) 
-        Config.Aimbot.TargetPart = v 
+        _0xd.Aimbot.TargetPart = v 
         SyncAimbot() 
     end)
-    AddToggle(LegitPage, "Team Check", Config.Aimbot.TeamCheck, function(v) 
-        Config.Aimbot.TeamCheck = v 
+    AddToggle(LegitPage, "Team Check", _0xd.Aimbot.TeamCheck, function(v) 
+        _0xd.Aimbot.TeamCheck = v 
         SyncAimbot() 
     end)
 
-    local VisualPage = Menu:CreateTab("Visuals", "👁")
-    AddToggle(VisualPage, "Enable ESP", Config.Visuals.Enabled, function(v) 
-        Config.Visuals.Enabled = v 
+    local VisualPage = _0x1c:CreateTab("Visuals", "👁")
+    
+    AddDropdown(VisualPage, "ESP Mode", {"Internal", "Drawing", "Hybrid"}, 1, function(v)
+        _0xd.Visuals.Mode = v
+        print("🎯 ESP Mode alterado para: " .. v)
     end)
-    AddToggle(VisualPage, "Boxes", Config.Visuals.Boxes, function(v) 
-        Config.Visuals.Boxes = v 
+    
+    AddToggle(VisualPage, "Enable ESP", _0xd.Visuals.Enabled, function(v) 
+        _0xd.Visuals.Enabled = v 
     end)
-    AddToggle(VisualPage, "Names", Config.Visuals.Names, function(v) 
-        Config.Visuals.Names = v 
+    AddToggle(VisualPage, "Boxes", _0xd.Visuals.Boxes, function(v) 
+        _0xd.Visuals.Boxes = v 
     end)
-    AddToggle(VisualPage, "Health", Config.Visuals.Health, function(v) 
-        Config.Visuals.Health = v 
+    AddToggle(VisualPage, "Names", _0xd.Visuals.Names, function(v) 
+        _0xd.Visuals.Names = v 
     end)
-    AddToggle(VisualPage, "Team Check", Config.Visuals.TeamCheck, function(v) 
-        Config.Visuals.TeamCheck = v 
+    AddToggle(VisualPage, "Health", _0xd.Visuals.Health, function(v) 
+        _0xd.Visuals.Health = v 
     end)
-    AddSlider(VisualPage, "Max Distance", 100, 5000, Config.Visuals.MaxDistance, function(v) 
-        Config.Visuals.MaxDistance = v 
+    AddToggle(VisualPage, "Highlight (Internal Only)", _0xd.Visuals.Highlight, function(v) 
+        _0xd.Visuals.Highlight = v 
+    end)
+    AddToggle(VisualPage, "Tracers (Drawing Only)", _0xd.Visuals.Tracers, function(v) 
+        _0xd.Visuals.Tracers = v 
+    end)
+    AddToggle(VisualPage, "Team Check", _0xd.Visuals.TeamCheck, function(v) 
+        _0xd.Visuals.TeamCheck = v 
+    end)
+    AddSlider(VisualPage, "Max Distance", 100, 5000, _0xd.Visuals.MaxDistance, function(v) 
+        _0xd.Visuals.MaxDistance = v 
     end)
 
-    -- Aba Misc
-    local MiscPage = Menu:CreateTab("Misc", "⚙")
+    local MiscPage = _0x1c:CreateTab("Misc", "⚙")
 
     local skyColors = {"Default", "Gold", "Amber", "Desert", "Sunset", "Topographic"}
     AddDropdown(MiscPage, "Sky Color", skyColors, 1, function(selected)
         pcall(function()
-            local sky = Lighting:FindFirstChild("NataMenu_Sky")
-            local cc = Lighting:FindFirstChild("NataMenu_SkyTint")
+            local sky = _0x6:FindFirstChild("NataMenu_Sky")
+            local cc = _0x6:FindFirstChild("NataMenu_SkyTint")
             
             if sky then sky:Destroy() end
             if cc then cc:Destroy() end
@@ -808,12 +1234,12 @@ function Menu:Init()
             if targetColor then
                 local newSky = Instance.new("Sky")
                 newSky.Name = "NataMenu_Sky"
-                newSky.Parent = Lighting
+                newSky.Parent = _0x6
                 newSky.CelestialBodiesShown = false
 
                 local newCC = Instance.new("ColorCorrectionEffect")
                 newCC.Name = "NataMenu_SkyTint"
-                newCC.Parent = Lighting
+                newCC.Parent = _0x6
                 newCC.Enabled = true
                 newCC.TintColor = targetColor
                 newCC.Brightness = -0.05
@@ -821,68 +1247,67 @@ function Menu:Init()
         end)
     end)
 
-    -- Funções Misc
-    AddToggle(MiscPage, "Night Mode", Config.Misc.NightMode, function(v)
-        Config.Misc.NightMode = v
-        miscFunctions:ToggleNightMode(v)
+    AddToggle(MiscPage, "Night Mode", _0xd.Misc.NightMode, function(v)
+        _0xd.Misc.NightMode = v
+        _0x1b:ToggleNightMode(v)
     end)
 
-    AddToggle(MiscPage, "Fullbright", Config.Misc.Fullbright, function(v)
-        Config.Misc.Fullbright = v
-        miscFunctions:ToggleFullbright(v)
+    AddToggle(MiscPage, "Fullbright", _0xd.Misc.Fullbright, function(v)
+        _0xd.Misc.Fullbright = v
+        _0x1b:ToggleFullbright(v)
     end)
 
-    AddToggle(MiscPage, "Noclip", Config.Misc.NoClip, function(v)
-        Config.Misc.NoClip = v
-        miscFunctions:ToggleNoClip(v)
+    AddToggle(MiscPage, "Noclip", _0xd.Misc.NoClip, function(v)
+        _0xd.Misc.NoClip = v
+        _0x1b:ToggleNoClip(v)
     end)
 
-    AddSlider(MiscPage, "Walk Speed", 16, 100, Config.Misc.WalkSpeed, function(v)
-        Config.Misc.WalkSpeed = v
-        miscFunctions:SetWalkSpeed(v)
+    AddSlider(MiscPage, "Walk Speed", 16, 100, _0xd.Misc.WalkSpeed, function(v)
+        _0xd.Misc.WalkSpeed = v
+        _0x1b:SetWalkSpeed(v)
     end)
 
-    AddSlider(MiscPage, "Jump Power", 50, 200, Config.Misc.JumpPower, function(v)
-        Config.Misc.JumpPower = v
-        miscFunctions:SetJumpPower(v)
+    AddSlider(MiscPage, "Jump Power", 50, 200, _0xd.Misc.JumpPower, function(v)
+        _0xd.Misc.JumpPower = v
+        _0x1b:SetJumpPower(v)
     end)
 
-    AddToggle(MiscPage, "FPS Boost", Config.Misc.FPSBoost, function(v)
-        Config.Misc.FPSBoost = v
-        miscFunctions:ToggleFPSBoost(v)
+    AddToggle(MiscPage, "FPS Boost", _0xd.Misc.FPSBoost, function(v)
+        _0xd.Misc.FPSBoost = v
+        _0x1b:ToggleFPSBoost(v)
     end)
 
-    AddToggle(MiscPage, "Auto Click", Config.Misc.AutoClick, function(v)
-        Config.Misc.AutoClick = v
-        miscFunctions:ToggleAutoClick(v)
+    AddToggle(MiscPage, "Auto Click", _0xd.Misc.AutoClick, function(v)
+        _0xd.Misc.AutoClick = v
+        _0x1b:ToggleAutoClick(v)
     end)
 
-    AddToggle(MiscPage, "Anti-AFK", Config.Misc.AntiAFK, function(v)
-        Config.Misc.AntiAFK = v
-        miscFunctions:ToggleAntiAFK(v)
+    AddToggle(MiscPage, "Anti-AFK", _0xd.Misc.AntiAFK, function(v)
+        _0xd.Misc.AntiAFK = v
+        _0x1b:ToggleAntiAFK(v)
     end)
 
-    AddToggle(MiscPage, "Bypass", Config.Misc.Bypass, function(v)
-        Config.Misc.Bypass = v
-        miscFunctions:ToggleBypass(v)
+    AddToggle(MiscPage, "Bypass", _0xd.Misc.Bypass, function(v)
+        _0xd.Misc.Bypass = v
+        _0x1b:ToggleBypass(v)
     end)
 
-    -- Botões
+    AddButton(MiscPage, "🚨 PANIC MODE (F6)", "⚠️", function()
+        _0xc:Toggle()
+    end)
+
     AddButton(MiscPage, "Refresh ESP", "🔄", function()
-        if DrawingLib then
-            for _, drawing in pairs(ESP.Drawings) do
-                for _, d in pairs(drawing) do
-                    if d then
-                        d:Remove()
-                    end
+        _0x1a:ClearAll()
+        if _0x18 then
+            _0x19:ClearAll()
+        end
+        for _, p in ipairs(_0x4:GetPlayers()) do 
+            pcall(function() 
+                _0x1a:AddPlayer(p)
+                if _0x18 then
+                    _0x19:AddPlayer(p)
                 end
-            end
-            ESP.Drawings = {}
-            for _, p in ipairs(Players:GetPlayers()) do 
-                pcall(function() 
-                    ESP:AddPlayer(p) 
-                end) 
-            end
+            end) 
         end
     end)
 
@@ -897,16 +1322,14 @@ function Menu:Init()
     end)
 
     AddButton(MiscPage, "Credits", "⭐", function()
-        miscFunctions:ShowCredits()
+        _0x1b:ShowCredits()
     end)
 
-    -- Abrir LegitBot por padrão
-    Menu.Tabs["LegitBot"].Btn.TextColor3 = Color3.new(1, 1, 1)
-    Menu.Tabs["LegitBot"].Btn.BackgroundColor3 = Color3.fromRGB(40, 40, 30)
-    Menu.Tabs["LegitBot"].Btn.BackgroundTransparency = 0.2
-    Menu.Tabs["LegitBot"].Page.Visible = true
+    _0x1c.Tabs["LegitBot"].Btn.TextColor3 = Color3.new(1, 1, 1)
+    _0x1c.Tabs["LegitBot"].Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 20)
+    _0x1c.Tabs["LegitBot"].Btn.BackgroundTransparency = 0.3
+    _0x1c.Tabs["LegitBot"].Page.Visible = true
 
-    -- Draggable
     local dragging, dragStart, startPos
     Main.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -916,77 +1339,115 @@ function Menu:Init()
         end
     end)
 
-    UserInputService.InputChanged:Connect(function(input)
+    _0x3.InputChanged:Connect(function(input)
         if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
             local delta = input.Position - dragStart
             Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
     end)
 
-    UserInputService.InputEnded:Connect(function(input)
+    _0x3.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             dragging = false
         end
     end)
 
-    -- Toggle F5
-    UserInputService.InputBegan:Connect(function(input)
+    _0x3.InputBegan:Connect(function(input)
         if input.KeyCode == Enum.KeyCode.F5 then
             ScreenGui.Enabled = not ScreenGui.Enabled
         end
     end)
 
-    -- Watermark com fundo topográfico
-    local Watermark = Instance.new("ScreenGui", game:GetService("CoreGui"))
+    local Watermark = Instance.new("ScreenGui", _0x1:GetService("CoreGui"))
     Watermark.Name = "NataMenuWatermark"
     Watermark.Enabled = true
     
     local WatermarkFrame = Instance.new("Frame", Watermark)
-    WatermarkFrame.Size = UDim2.new(0, 200, 0, 35)
-    WatermarkFrame.Position = UDim2.new(1, -205, 0, 10)
-    WatermarkFrame.BackgroundColor3 = BLACK_BG
+    WatermarkFrame.Size = UDim2.new(0, 260, 0, 35)
+    WatermarkFrame.Position = UDim2.new(1, -265, 0, 10)
+    WatermarkFrame.BackgroundColor3 = _0x11
     WatermarkFrame.BorderSizePixel = 2
-    WatermarkFrame.BorderColor3 = GOLD_COLOR
+    WatermarkFrame.BorderColor3 = _0xe
     
-    -- Fundo topográfico no watermark
+    local WatermarkCorner = Instance.new("UICorner", WatermarkFrame)
+    WatermarkCorner.CornerRadius = UDim.new(0, 8)
+    
     local WatermarkDecal = Instance.new("ImageLabel", WatermarkFrame)
     WatermarkDecal.Size = UDim2.new(1, 0, 1, 0)
-    WatermarkDecal.Image = "rbxassetid://" .. TOPOGRAPHIC_DECAL_ID
+    WatermarkDecal.Image = "rbxassetid://" .. _0xb
     WatermarkDecal.ImageTransparency = 0.8
     WatermarkDecal.BackgroundTransparency = 1
     WatermarkDecal.ScaleType = Enum.ScaleType.Stretch
     
     local WatermarkLabel = Instance.new("TextLabel", WatermarkFrame)
     WatermarkLabel.Size = UDim2.new(1, 0, 1, 0)
-    WatermarkLabel.Text = "🗺️ TOPOGRAPHIC v1.0"
-    WatermarkLabel.TextColor3 = TEXT_GOLD
+    WatermarkLabel.Text = "NATA.MENU"
+    WatermarkLabel.TextColor3 = _0x14
     WatermarkLabel.Font = Enum.Font.SourceSansBold
     WatermarkLabel.TextSize = 12
     WatermarkLabel.BackgroundTransparency = 1
     WatermarkLabel.ZIndex = 2
 
-    -- Créditos
     local Credits = Instance.new("TextLabel", ScreenGui)
-    Credits.Text = "Designer: Farpa | Programmer: Toque | Decal: " .. TOPOGRAPHIC_DECAL_ID
-    Credits.Size = UDim2.new(0, 350, 0, 20)
-    Credits.Position = UDim2.new(1, -360, 0, 50)
+    Credits.Text = "Designer: Farpa | Programmer: Toque | 🎯 HYBRID ESP"
+    Credits.Size = UDim2.new(0, 390, 0, 20)
+    Credits.Position = UDim2.new(1, -400, 0, 50)
     Credits.BackgroundTransparency = 1
-    Credits.TextColor3 = TEXT_GOLD
+    Credits.TextColor3 = _0x14
     Credits.Font = Enum.Font.SourceSans
     Credits.TextSize = 11
     Credits.BorderSizePixel = 0
     Credits.ZIndex = 2
+    
+    local MainCorner = Instance.new("UICorner", Main)
+    MainCorner.CornerRadius = UDim.new(0, 10)
+    
+    local SidebarCorner = Instance.new("UICorner", Sidebar)
+    SidebarCorner.CornerRadius = UDim.new(0, 8)
+    
+    local ContentAreaCorner = Instance.new("UICorner", ContentArea)
+    ContentAreaCorner.CornerRadius = UDim.new(0, 8)
 end
 
--- Inicializar menu
 pcall(function()
-    Menu:Init()
+    _0x1c:Init()
 end)
 
--- Conector NoClip
-RunService.Stepped:Connect(function()
-    if Config.Misc.NoClip and LocalPlayer.Character then
-        local char = LocalPlayer.Character
+_0x3.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    
+    if input.KeyCode == Enum.KeyCode.F6 then
+        _0xc:Toggle()
+        
+        local notification = Instance.new("ScreenGui", _0x1:GetService("CoreGui"))
+        notification.Name = "PanicNotification"
+        
+        local frame = Instance.new("Frame", notification)
+        frame.Size = UDim2.new(0, 300, 0, 60)
+        frame.Position = UDim2.new(0.5, -150, 0.1, 0)
+        frame.BackgroundColor3 = _0xc.Active and _0x15 or Color3.fromRGB(50, 200, 50)
+        frame.BorderSizePixel = 2
+        frame.BorderColor3 = Color3.new(1, 1, 1)
+        
+        local corner = Instance.new("UICorner", frame)
+        corner.CornerRadius = UDim.new(0, 10)
+        
+        local label = Instance.new("TextLabel", frame)
+        label.Size = UDim2.new(1, 0, 1, 0)
+        label.Text = _0xc.Active and "🚨 PANIC MODE ATIVO!" or "✅ PANIC MODE DESATIVADO!"
+        label.TextColor3 = Color3.new(1, 1, 1)
+        label.Font = Enum.Font.SourceSansBold
+        label.TextSize = 18
+        label.BackgroundTransparency = 1
+        
+        wait(2)
+        notification:Destroy()
+    end
+end)
+
+_0x2.Stepped:Connect(function()
+    if _0xd.Misc.NoClip and _0x7.Character and not _0xc.Active then
+        local char = _0x7.Character
         for _, part in pairs(char:GetDescendants()) do
             if part:IsA("BasePart") then
                 part.CanCollide = false
@@ -995,30 +1456,31 @@ RunService.Stepped:Connect(function()
     end
 end)
 
--- Atualizar WalkSpeed/JumpPower
-LocalPlayer.CharacterAdded:Connect(function(character)
+_0x7.CharacterAdded:Connect(function(character)
     wait(1)
-    if character then
+    if character and not _0xc.Active then
         local humanoid = character:FindFirstChild("Humanoid")
         if humanoid then
-            humanoid.WalkSpeed = Config.Misc.WalkSpeed
-            humanoid.JumpPower = Config.Misc.JumpPower
+            humanoid.WalkSpeed = _0xd.Misc.WalkSpeed
+            humanoid.JumpPower = _0xd.Misc.JumpPower
         end
     end
 end)
 
--- Iniciar AntiAFK
-miscFunctions:ToggleAntiAFK(true)
+_0x1b:ToggleAntiAFK(true)
 
 print("╔══════════════════════════════════════════════╗")
-print("║          NATA.MENU TOPOGRAPHIC              ║")
-print("║   🎯 LegitBot   👁 Visuals                 ║")
-print("║   ⚙ Misc        🚀 Loaded!                 ║")
-print("║   🗺️ Custom Topographic Decal             ║")
-print("║   🔲 Decal ID: " .. TOPOGRAPHIC_DECAL_ID .. "          ║")
-print("║   ⚫ BLACK BACKGROUND                       ║")
-print("║   🟡 GOLDEN LINES                          ║")
+print("║       NATA.MENU HYBRID ESP v4.0             ║")
+print("║   🎯 LegitBot   ✨ Hybrid ESP              ║")
+print("║   🚨 PANIC MODE: F6 (Emergency)            ║")
+print("║                                              ║")
+print("║   3 ESP MODES:                              ║")
+print("║   1️⃣ Internal (Seguro anti-cheat)         ║")
+print("║   2️⃣ Drawing (Invisível F12)              ║")
+print("║   3️⃣ Hybrid (AMBOS ATIVOS!)               ║")
+print("║                                              ║")
+print("║   F5 - Toggle Menu                          ║")
+print("║   F6 - PANIC MODE (Desativa TUDO)          ║")
 print("╚══════════════════════════════════════════════╝")
-print("F5 - Toggle Menu")
 print("Designer: Farpa | Programmer: Toque")
-print("Topographic Decal ID: " .. TOPOGRAPHIC_DECAL_ID)
+print("✨ HYBRID ESP = Melhor de dois mundos!")
